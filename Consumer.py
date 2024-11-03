@@ -3,6 +3,7 @@ import json
 import matplotlib.pyplot as plt
 import time
 from datetime import datetime
+from utils.enode_decode_data import decode
 
 temp = []
 hum = []
@@ -31,11 +32,13 @@ last_update_time = time.time()
 update_interval = 2  # Actualizar cada 2 segundos
 
 for message in consumer:
-    print(f"Mensaje recibido: {message.value.decode('utf-8')}")
+    print("Mensaje recibido sin decodificar:", message.value, ", longitud:", len(message.value))
+    decoded_message = decode(message.value)
+    print(f"Mensaje recibido: {decoded_message}")
     
     try:
         # Decodifica el JSON y elimina comillas extra si es necesario
-        payload_str = message.value.decode('utf-8')
+        payload_str =decoded_message
         payload = json.loads(payload_str)
 
         if isinstance(payload, str):
