@@ -1,7 +1,7 @@
 import random
 import json
 import time
-from kafka import kafkaProducer
+from kafka import KafkaProducer
 
 def generar_datos():
     datos = {
