@@ -30,6 +30,10 @@ plt.subplots_adjust(hspace=1)
 last_update_time = time.time()
 update_interval = 2  # Actualizar cada 2 segundos
 
+# Definir las etiquetas para la dirección del viento
+direccion_mapping = {"N": 0, "NO": 1, "O": 2, "SO": 3, "S": 4, "SE": 5, "E": 6, "NE": 7}
+direccion_labels = ["N", "NO", "O", "SO", "S", "SE", "E", "NE"]
+
 for message in consumer:
     print(f"Mensaje recibido: {message.value.decode('utf-8')}")
     
@@ -44,7 +48,8 @@ for message in consumer:
         if isinstance(payload, dict):
             temp.append(payload['temperatura'])
             hum.append(payload['humedad'])
-            dir_viento.append(payload['direccion_viento'])
+            # Mapear la dirección del viento a su valor numérico
+            dir_viento.append(direccion_mapping.get(payload['direccion_viento'], None))
             current_time = datetime.now().strftime("%H:%M:%S")  # Formato de hora
             time_data.append(current_time)  # Guarda la hora actual
 
@@ -73,17 +78,11 @@ for message in consumer:
                 ax3.plot(time_data, dir_viento, 'go-')  # Línea verde con puntos
                 ax3.set_xlabel('Tiempo (HH:MM:SS)')
                 ax3.set_ylabel('Dirección del Viento')
-
-                # Definir las etiquetas para la dirección del viento
-                direccion_labels = ["N", "NO", "O", "SO", "S", "SE", "E", "NE"]
-                
-                # Establecer ticks y etiquetas para la dirección del viento
-                ax3.set_yticks(range(len(direccion_labels)))  # Ajustar según la cantidad de etiquetas
-                ax3.set_yticklabels(direccion_labels)  # Establecer etiquetas fijas
-
-                ax3.set_xticks(range(len(time_data)))  # Establecer los ticks del eje x
-                ax3.set_xticklabels(time_data, rotation=45, ha='right')  # Actualiza las etiquetas
-                ax3.grid(True)  # Activa la cuadrícula para la gráfica de Dirección del Viento
+                ax3.set_yticks(range(len(direccion_labels)))
+                ax3.set_yticklabels(direccion_labels)
+                ax3.set_xticks(range(len(time_data)))
+                ax3.set_xticklabels(time_data, rotation=45, ha='right')
+                ax3.grid(True)
 
                 # Pausa para actualizar las gráficas
                 plt.pause(0.1)
